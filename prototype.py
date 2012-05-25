@@ -8,6 +8,7 @@ from ystockquote import get_historical_prices
 today = datetime.date.today().strftime('%Y%m%d')
 goog = get_historical_prices('GOOG', '20010103', today)
 
+
 class Strategy(object):
 
     def __call__(self, tick):
@@ -26,9 +27,9 @@ class Bollinger(Strategy):
         return tick.ma(self.n) - self.k * tick.std(self.n)
 
     def signal(self, tick):
-        if tick.close > self.upper(tick):
+        if float(tick.close) > self.upper(tick):
             return 'buy'
-        elif tick.close < self.lower(tick):
+        elif float(tick.close) < self.lower(tick):
             return 'sell'
 
 class Tick(namedtuple('Tick',
@@ -37,11 +38,14 @@ class Tick(namedtuple('Tick',
     def std(self, n):
         index = self.index + 1
         return numpy.std([float(tick.close) for tick in self.series[index-n:index]])
+
     def ma(self, n):
         index = self.index + 1
         return numpy.mean([float(tick.close) for tick in self.series[index-n:index]])
+
     def trade(self, strategy):
         return strategy(self)
+
 
 # instantiating ticks
 ticks = []
@@ -49,5 +53,8 @@ ticks = []
 ticks.extend([Tick(ticks, index, *tick) for index, tick in enumerate(reversed(goog[1:]))])
 
 bol = Bollinger(20, 2)
+
+tick = ticks[1050]
+print tick.trade(bol)
 
 import code; code.interact(local=locals())
