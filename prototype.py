@@ -79,16 +79,10 @@ class Bollinger(Strategy):
         self.n = n
         self.k = k
 
-    def upper(self, tick):
-        return tick.ma(self.n) + self.k * tick.std(self.n)
-
-    def lower(self, tick):
-        return tick.ma(self.n) - self.k * tick.std(self.n)
-
     def signal(self, tick):
-        if tick.close > self.upper(tick):
+        if tick.close > tick.upper_bb(n, k):
             return 'buy'
-        elif tick.close < self.lower(tick):
+        elif tick.close < tick.lower_bb(n, k):
             return 'sell'
 
 
@@ -98,7 +92,7 @@ class Tick(namedtuple('Tick',
     """ Tick i.e. stock price etc. on a given day
 
     Contains a reference to the time series it belongs to (Stock.data) and its
-    index in the list for metric computation.
+    index in the list in order to compute metrics.
 
     >>> Tick([], 0, datetime.date(2012, 5, 25), 1.0, 1.0, 1.0,
     ...              1.0, 1, 1.0)
@@ -106,6 +100,11 @@ class Tick(namedtuple('Tick',
     """
 
     __slots__ = ()
+
+    def __repr__(self):
+        return 'Tick(series=[...], index={0.index}, date={0.date} \
+open={0.open}, high={0.high}, low={0.low}, close={0.close}, \
+volume={0.volume}, adj={0.adj})'.format(self)
 
     def std(self, n):
         index = self.index + 1
@@ -115,10 +114,11 @@ class Tick(namedtuple('Tick',
         index = self.index + 1
         return numpy.mean([tick.close for tick in self.series[index-n:index]])
 
-    def __repr__(self):
-        return 'Tick(series=[...], index={0.index}, date={0.date} \
-open={0.open}, high={0.high}, low={0.low}, close={0.close}, \
-volume={0.volume}, adj={0.adj})'.format(self)
+    def upper_bb(self, n, k):
+        return self.ma(n) + k * self.std(n)
+
+    def lower_bb(self, n, k):
+        return self.ma(n) - k * self.std(n)
 
 
 class BackTest(object):
