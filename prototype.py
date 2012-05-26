@@ -68,21 +68,17 @@ class Stock(object):
         return self.data[index]
 
 
-class Strategy(object):
-
-    def __call__(self, tick):
-       return self.signal(tick)
-
-class Bollinger(Strategy):
+class Bollinger(object):
+    """ Bollinger's band trading strategy """
 
     def __init__(self, n, k):
         self.n = n
         self.k = k
 
-    def signal(self, tick):
-        if tick.close > tick.upper_bb(n, k):
+    def __call__(self, tick):
+        if tick.close > tick.upper_bb(self.n, self.k):
             return 'buy'
-        elif tick.close < tick.lower_bb(n, k):
+        elif tick.close < tick.lower_bb(self.n, self.k):
             return 'sell'
 
 
@@ -157,6 +153,8 @@ class BackTest(object):
         return result
 
 bollinger = Bollinger(30, 1)
+goog = Stock('GOOG')
 backtest = BackTest()
+print backtest(goog, bollinger)
 
 #import code; code.interact(local=locals())
