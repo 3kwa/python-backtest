@@ -16,7 +16,7 @@ class Stock(object):
         raw = get_historical_prices(symbol, '20010103', today)
         # Tick aware of the time series it belongs to
         self.data.extend(
-            [ Tick(self.data, index, *tick)
+            [ Tick(self.data, index, *Tick.cast(tick))
               for index, tick
               in enumerate(reversed(raw[1:])) ])
 
@@ -45,9 +45,9 @@ class Bollinger(Strategy):
         return tick.ma(self.n) - self.k * tick.std(self.n)
 
     def signal(self, tick):
-        if float(tick.close) > self.upper(tick):
+        if tick.close > self.upper(tick):
             return 'buy'
-        elif float(tick.close) < self.lower(tick):
+        elif tick.close < self.lower(tick):
             return 'sell'
 
 class Tick(namedtuple('Tick',
@@ -56,14 +56,20 @@ class Tick(namedtuple('Tick',
 
     def std(self, n):
         index = self.index + 1
-        return numpy.std([float(tick.close) for tick in self.series[index-n:index]])
+        return numpy.std([tick.close for tick in self.series[index-n:index]])
 
     def ma(self, n):
         index = self.index + 1
-        return numpy.mean([float(tick.close) for tick in self.series[index-n:index]])
+        return numpy.mean([tick.close for tick in self.series[index-n:index]])
 
     def trade(self, strategy):
         return strategy(self)
+
+    @staticmethod
+    def cast(raw_tick):
+        result = [ datetime.date(*map(int, raw_tick[0].split('-'))) ]
+        result.extend( map(float, raw_tick[1:]) )
+        return result
 
 class BackTest(object):
 
@@ -77,11 +83,11 @@ class BackTest(object):
         for t in stock:
             if t.trade(strategy) == 'buy' and self.position != 'long':
                 self.position = self.buy[self.position]
-                self.trades.append(float(t.close))
+                self.trades.append(t.close)
             elif t.trade(strategy) == 'sell' and self.position != 'short':
                 self.position = self.sell[self.position]
-                self.trades.append(-float(t.close))
-        return self.position, self.pnl, float(self.latest.close), len(self.trades)
+                self.trades.append(-t.close)
+        return self.position, self.pnl, self.latest.close, len(self.trades)
 
     def cost(self, rate):
         return sum(abs(trade) for trade in self.trades) * rate / 100.
