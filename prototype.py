@@ -10,30 +10,39 @@ class Stock(object):
 
     def __init__(self, symbol):
         self.data = []
-        self._load(symbol)
+        self.load(symbol)
 
-    def _load(self, symbol):
-        raw = self._get_from_cache(symbol)
+    def load(self, symbol):
+        raw = Stock.get_from_cache(symbol)
         if raw is None:
             today = datetime.date.today().strftime('%Y%m%d')
             raw = get_historical_prices(symbol, '20010103', today)
-            self._save_to_cache(symbol, raw)
+            Stock.save_to_cache(symbol, raw)
         # Tick aware of the time series it belongs to
         self.data.extend(
-            [ Tick(self.data, index, *Tick.cast(tick))
+            [ Tick(self.data, index, *Stock.cast(tick))
               for index, tick
               in enumerate(reversed(raw[1:])) ])
 
-    def _get_from_cache(self, symbol):
+    @staticmethod
+    def get_from_cache(symbol):
         try:
             with open('{0}_{1}'.format(symbol, datetime.date.today())) as f:
                 return pickle.load(f)
         except (IOError, EOFError):
             return None
 
-    def _save_to_cache(self, symbol, raw):
+    @staticmethod
+    def save_to_cache(symbol, raw):
         with open('{0}_{1}'.format(symbol, datetime.date.today()), 'w') as f:
             return pickle.dump(raw, f)
+
+    @staticmethod
+    def cast(raw_tick):
+        result = [ datetime.date(*map(int, raw_tick[0].split('-'))) ]
+        result.extend( map(float, raw_tick[1:]) )
+        return result
+
 
     def __iter__(self):
         for tick in self.data:
@@ -81,12 +90,6 @@ class Tick(namedtuple('Tick',
 
     def trade(self, strategy):
         return strategy(self)
-
-    @staticmethod
-    def cast(raw_tick):
-        result = [ datetime.date(*map(int, raw_tick[0].split('-'))) ]
-        result.extend( map(float, raw_tick[1:]) )
-        return result
 
 class BackTest(object):
 
