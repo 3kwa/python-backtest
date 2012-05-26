@@ -35,7 +35,7 @@ class Stock(object):
     @staticmethod
     def save_to_cache(symbol, raw):
         with open('{0}_{1}'.format(symbol, datetime.date.today()), 'w') as f:
-            return pickle.dump(raw, f)
+            pickle.dump(raw, f)
 
     @staticmethod
     def cast(raw_tick):
