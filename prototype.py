@@ -1,5 +1,6 @@
 import datetime
 from collections import namedtuple
+import cPickle as pickle
 
 import numpy
 from ystockquote import get_historical_prices
@@ -12,13 +13,27 @@ class Stock(object):
         self._load(symbol)
 
     def _load(self, symbol):
-        today = datetime.date.today().strftime('%Y%m%d')
-        raw = get_historical_prices(symbol, '20010103', today)
+        raw = self._get_from_cache(symbol)
+        if raw is None:
+            today = datetime.date.today().strftime('%Y%m%d')
+            raw = get_historical_prices(symbol, '20010103', today)
+            self._save_to_cache(symbol, raw)
         # Tick aware of the time series it belongs to
         self.data.extend(
             [ Tick(self.data, index, *Tick.cast(tick))
               for index, tick
               in enumerate(reversed(raw[1:])) ])
+
+    def _get_from_cache(self, symbol):
+        try:
+            with open('{0}_{1}'.format(symbol, datetime.date.today())) as f:
+                return pickle.load(f)
+        except (IOError, EOFError):
+            return None
+
+    def _save_to_cache(self, symbol, raw):
+        with open('{0}_{1}'.format(symbol, datetime.date.today()), 'w') as f:
+            return pickle.dump(raw, f)
 
     def __iter__(self):
         for tick in self.data:
@@ -53,6 +68,8 @@ class Bollinger(Strategy):
 class Tick(namedtuple('Tick',
                       ['series', 'index', 'date', 'open', 'high', 'low',
                        'close', 'volume', 'adj'])):
+
+    __slots__ = ()
 
     def std(self, n):
         index = self.index + 1
