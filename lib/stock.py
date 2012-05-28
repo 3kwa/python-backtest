@@ -75,6 +75,9 @@ class Stock(object):
     def __getitem__(self, index):
         return self.data[index]
 
+    def __len__(self):
+        return len(self.data)
+
     def plot(self, *args):
         """ Save a plot of Tick args under the name symbol.png
 
