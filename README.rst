@@ -20,7 +20,6 @@ Tick attributes you may want to plot:
     + upper_bb(N, K)
     + lower_bb(N, K)
 
-::
     >>> goog.plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)')
 
 It will save the plot in the file png/GOOG.png.
@@ -36,12 +35,10 @@ monkey = Monkey(30)
 
 To back test the bollinger strategy against the goog stock
 
-::
     >>> backtest(goog, bollinger)
 
 To plot PNL (net) and position (long/.../short) over time call BackTest.plot
 
-::
     >>> backtest.plot()
 
 It will save the plot in the file png/GOOG_Bollinger.png
@@ -53,7 +50,6 @@ Backtest.cost should be a function taking a trade amount as an argument and
 returning a cost. By default there are no trading cost using yet it is very
 easy to change.
 
-::
     >>> backtest.cost = lambda trade: 0.5 * trade / 100
 
 Will factor in 0.5 % trading cost for the net PNL computation.
