@@ -1,10 +1,17 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
 import code
 
 from lib import Stock, BackTest
 from strategy import Bollinger, Monkey
 
 
-banner = open('README.rst').read()
+def help():
+    print open('README.rst').read()
+
+banner = """Back Testing Trading Strategy Console
+type help() for assistance."""
 bollinger = Bollinger(30, 1)
 monkey = Monkey(30)
 goog = Stock('GOOG')
