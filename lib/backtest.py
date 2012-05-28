@@ -53,7 +53,7 @@ net={0.net})'.format(self, len(self.trades))
         """ trade cost for the backtest period """
         return self._trade_cost(len(self.stock) - 1)
 
-    def _trade_cost(self, tick_index=None):
+    def _trade_cost(self, tick_index):
         """ trade cost from start to tick_index """
         return sum(self.cost(abs(trade.tick.close)) for trade in self.trades
                    if trade.tick.index <= tick_index)
@@ -63,7 +63,7 @@ net={0.net})'.format(self, len(self.trades))
         """ gross pnl for the backtest period """
         return self._gross(len(self.stock) - 1)
 
-    def _gross(self, tick_index=None):
+    def _gross(self, tick_index):
         """ gross pnl from start to tick_index """
         sign = lambda trade: 1 if trade.order == 'sell' else -1
         return sum(sign(trade) * trade.tick.close for trade in self.trades
@@ -74,7 +74,7 @@ net={0.net})'.format(self, len(self.trades))
         """ net pnl for the backtest period """
         return self._net(len(self.stock) - 1)
 
-    def _net(self, tick_index=None):
+    def _net(self, tick_index):
         """ net pnl from start to tick_index """
         result = 0
         if self._position(tick_index) == 'long':
@@ -90,7 +90,7 @@ net={0.net})'.format(self, len(self.trades))
         """ position at the end of the backtest period """
         return self._position(len(self.stock) - 1)
 
-    def _position(self, tick_index=None, numeric_flag=False):
+    def _position(self, tick_index, numeric_flag=False):
         """ position at tick_index 1/0/-1 if numeric_flag """
         position_ = {1: 'long', 0: None, -1: 'short'}
         counter = Counter(trade.order for trade in self.trades
