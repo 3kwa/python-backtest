@@ -78,11 +78,10 @@ class Stock(object):
     def plot(self, *args):
         """ Save a plot of Tick args under the name symbol.png
 
-        >>> goog = Stock('GOOG')
-
         To get a plot of close, upper and lover bollinger band for N=30 and K=1
+        for GOOG
 
-        >>> goog.plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)')
+        >>> Stock('GOOG').plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)')
         """
         for value in args:
             match = re.match(r"(?P<method>\w+)(?P<parameters>\(.*\))?", value)
