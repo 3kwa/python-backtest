@@ -3,7 +3,7 @@ import cPickle as pickle
 import re
 
 from ext.ystockquote import get_historical_prices
-from matplotlib.pyplot import plot, savefig
+from matplotlib.pyplot import plot, savefig, clf
 
 from tick import Tick
 
@@ -14,6 +14,8 @@ class Stock(object):
     Loads from Yahoo when instantiated unless cache is available.
 
     >>> goog = Stock('GOOG')
+    >>> goog
+    Stock(symbol=GOOG, data=[1958])
     >>> isinstance(goog[0], Tick)
     True
     """
@@ -23,6 +25,9 @@ class Stock(object):
         self.data = []
         if symbol is not None:
             self.load(symbol)
+
+    def __repr__(self):
+        return "Stock(symbol={0}, data=[{1}])".format(self.symbol, len(self.data))
 
     def load(self, symbol):
         """ Loads the stock quote for symbol from Yahoo or cache """
@@ -87,7 +92,10 @@ class Stock(object):
             if dict_['parameters']:
                 parameters = map(int, dict_['parameters'][1:-1].split(','))
             if parameters:
-                plot([getattr(t, method)(*parameters) for t in self.data])
+                plot([t.date for t in self],
+                     [getattr(t, method)(*parameters) for t in self])
             else:
-                plot([getattr(t, method) for t in self.data])
+                plot([t.date for t in self],
+                     [getattr(t, method) for t in self])
         savefig('{0}.png'.format(self.symbol))
+        clf()
