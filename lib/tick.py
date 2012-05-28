@@ -3,6 +3,8 @@ from collections import namedtuple
 import numpy
 
 
+numpy.seterr(invalid='ignore')
+
 class Tick(namedtuple('Tick',
                       ['series', 'index', 'date', 'open', 'high', 'low',
                        'close', 'volume', 'adj'])):
