@@ -20,6 +20,9 @@ Tick attributes you may want to plot:
     + upper_bb(N, K)
     + lower_bb(N, K)
 
+To plot the close value and the upper and lower Bollinger's band for N=30 and
+K=1:
+
     >>> goog.plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)')
 
 It will save the plot in the file png/GOOG.png.
@@ -33,11 +36,11 @@ A strategy is a callable object accepting a Tick object as an argument and
 returning buy, None or sell. e.g. bollinger = Bollinger(30, 1),
 monkey = Monkey(30)
 
-To back test the bollinger strategy against the goog stock
+To back test the bollinger strategy against the goog stock:
 
     >>> backtest(goog, bollinger)
 
-To plot PNL (net) and position (long/.../short) over time call BackTest.plot
+To plot PNL (net) and position (long/.../short) over time call BackTest.plot:
 
     >>> backtest.plot()
 
@@ -48,7 +51,7 @@ Trading cost
 
 Backtest.cost should be a function taking a trade amount as an argument and
 returning a cost. By default there are no trading cost using yet it is very
-easy to change.
+easy to change:
 
     >>> backtest.cost = lambda trade: 0.5 * trade / 100
 
