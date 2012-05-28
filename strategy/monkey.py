@@ -1,6 +1,7 @@
 import random
 
 class Monkey(object):
+    """ Silly monkey strategy every freq days roll the dice """
 
     def __init__(self, freq):
         self.freq = freq
