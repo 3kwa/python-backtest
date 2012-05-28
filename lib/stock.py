@@ -2,7 +2,7 @@ import datetime
 import cPickle as pickle
 import re
 
-from ystockquote import get_historical_prices
+from ext.ystockquote import get_historical_prices
 from matplotlib.pyplot import plot, savefig
 
 from tick import Tick
