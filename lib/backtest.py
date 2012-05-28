@@ -111,6 +111,6 @@ net={0.net})'.format(self, len(self.trades))
         ylim(-1.5, 1.5)
         yticks((-1, 0, 1), ('short', '...', 'long'))
         plot(date, position)
-        savefig('{0}_{1}.png'.format(self.stock.symbol,
+        savefig('png/{0}_{1}.png'.format(self.stock.symbol,
                                      self.strategy.__class__.__name__))
         clf()

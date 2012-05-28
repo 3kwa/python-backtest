@@ -99,5 +99,5 @@ class Stock(object):
             else:
                 plot([t.date for t in self],
                      [getattr(t, method) for t in self])
-        savefig('{0}.png'.format(self.symbol))
+        savefig('png/{0}.png'.format(self.symbol))
         clf()
