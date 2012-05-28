@@ -11,6 +11,7 @@ objects.
 Stock.plot is a versatile instance method allowing you to plot Tick attributes.
 
 Tick attributes you may want to plot:
+
 - open
 - close
 - high
