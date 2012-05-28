@@ -36,8 +36,10 @@ BackTest
 BackTest() instantiates a backtesting object. e.g. backtest = BackTest()
 
 A strategy is a callable object accepting a Tick object as an argument and
-returning buy, None or sell. e.g. bollinger = Bollinger(30, 1),
-monkey = Monkey(30)
+returning buy, None or sell.
+
+    >>> bollinger = Bollinger(30, 1)
+    >>> monkey = Monkey(30)
 
 To back test the bollinger strategy against the goog stock:
 
