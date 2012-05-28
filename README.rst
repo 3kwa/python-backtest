@@ -11,14 +11,14 @@ objects.
 Stock.plot is a versatile instance method allowing you to plot Tick attributes.
 
 Tick attributes you may want to plot:
-    + open
-    + close
-    + high
-    + low
-    + ma(N)
-    + std(N)
-    + upper_bb(N, K)
-    + lower_bb(N, K)
+- open
+- close
+- high
+- low
+- ma(N)
+- std(N)
+- upper_bb(N, K)
+- lower_bb(N, K)
 
 To plot the close value and the upper and lower Bollinger's band for N=30 and
 K=1:
