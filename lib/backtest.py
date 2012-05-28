@@ -48,20 +48,10 @@ class BackTest(object):
         return 'BackTest(trades=[{1}], position={0.position}, gross={0.gross}, \
 net={0.net})'.format(self, len(self.trades))
 
-    def tick_index_none(f):
-        """ decorator setting tick_index if None """
-        def wrapper(*args, **kvargs):
-            args = list(args)
-            last_index = len(args[0].stock) - 1
-            if len(args) == 1:
-                args.append(last_index)
-            return f(*args, **kvargs)
-        return wrapper
-
     @property
     def trade_cost(self):
         """ trade cost for the backtest period """
-        return self._trade_cost()
+        return self._trade_cost(len(self.stock) - 1)
 
     def _trade_cost(self, tick_index=None):
         """ trade cost from start to tick_index """
@@ -71,9 +61,8 @@ net={0.net})'.format(self, len(self.trades))
     @property
     def gross(self):
         """ gross pnl for the backtest period """
-        return self._gross()
+        return self._gross(len(self.stock) - 1)
 
-    @tick_index_none
     def _gross(self, tick_index=None):
         """ gross pnl from start to tick_index """
         sign = lambda trade: 1 if trade.order == 'sell' else -1
@@ -83,9 +72,8 @@ net={0.net})'.format(self, len(self.trades))
     @property
     def net(self):
         """ net pnl for the backtest period """
-        return self._net()
+        return self._net(len(self.stock) - 1)
 
-    @tick_index_none
     def _net(self, tick_index=None):
         """ net pnl from start to tick_index """
         result = 0
@@ -100,9 +88,8 @@ net={0.net})'.format(self, len(self.trades))
     @property
     def position(self):
         """ position at the end of the backtest period """
-        return self._position()
+        return self._position(len(self.stock) - 1)
 
-    @tick_index_none
     def _position(self, tick_index=None, numeric_flag=False):
         """ position at tick_index 1/0/-1 if numeric_flag """
         position_ = {1: 'long', 0: None, -1: 'short'}
