@@ -5,8 +5,10 @@ Stock (& Tick)
 --------------
 
 Stock(SYMBOL) instantiates an object containing historical prices for a SYMBOL
-since 2001. e.g. goog = Stock('GOOG'). A Stock object is akin to a list of Tick
+since 2001. A Stock object is akin to a list of Tick
 objects.
+
+    >>> goog = Stock('GOOG')
 
 Stock.plot is a versatile instance method allowing you to plot Tick attributes.
 
