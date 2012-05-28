@@ -12,7 +12,7 @@ class BackTest(object):
 
     If goog is a Stock and bollinger a strategy (cf. strategy/__init__.py)
 
-    >>> backtest(goog, bollinger)
+    >>> backtest(goog, bollinger) #doctest: +SKIP
     BackTest(trades=[99], position=short, gross=1253.63, net=662.1)
 
     Current position is short, gross PNL is 1253.63, net PNL taking into account
@@ -23,7 +23,7 @@ class BackTest(object):
     the cost.
 
     >>> backtest.cost = lambda trade: 0.5 * trade / 100
-    >>> backtest
+    >>> backtest #doctest: +SKIP
     BackTest(trades=[99], position=short, gross=1253.63, net=435.78005)
     """
 
@@ -48,34 +48,46 @@ class BackTest(object):
         return 'BackTest(trades=[{1}], position={0.position}, gross={0.gross}, \
 net={0.net})'.format(self, len(self.trades))
 
+    def tick_index_none(f):
+        """ decorator setting tick_index if None """
+        def wrapper(*args, **kvargs):
+            args = list(args)
+            last_index = len(args[0].stock) - 1
+            if len(args) == 1:
+                args.append(last_index)
+            return f(*args, **kvargs)
+        return wrapper
+
     @property
     def trade_cost(self):
+        """ trade cost for the backtest period """
         return self._trade_cost()
 
     def _trade_cost(self, tick_index=None):
-        if tick_index is None:
-            tick_index = len(self.stock) - 1
+        """ trade cost from start to tick_index """
         return sum(self.cost(abs(trade.tick.close)) for trade in self.trades
                    if trade.tick.index <= tick_index)
 
     @property
     def gross(self):
+        """ gross pnl for the backtest period """
         return self._gross()
 
+    @tick_index_none
     def _gross(self, tick_index=None):
-        if tick_index is None:
-            tick_index = len(self.stock) - 1
+        """ gross pnl from start to tick_index """
         sign = lambda trade: 1 if trade.order == 'sell' else -1
         return sum(sign(trade) * trade.tick.close for trade in self.trades
                    if trade.tick.index <= tick_index)
 
     @property
     def net(self):
+        """ net pnl for the backtest period """
         return self._net()
 
+    @tick_index_none
     def _net(self, tick_index=None):
-        if tick_index is None:
-            tick_index = len(self.stock) - 1
+        """ net pnl from start to tick_index """
         result = 0
         if self._position(tick_index) == 'long':
             result += self.stock[tick_index].close
@@ -85,14 +97,14 @@ net={0.net})'.format(self, len(self.trades))
         result -= self._trade_cost(tick_index)
         return result
 
-
     @property
     def position(self):
+        """ position at the end of the backtest period """
         return self._position()
 
+    @tick_index_none
     def _position(self, tick_index=None, numeric_flag=False):
-        if tick_index is None:
-            tick_index = len(self.stock) - 1
+        """ position at tick_index 1/0/-1 if numeric_flag """
         position_ = {1: 'long', 0: None, -1: 'short'}
         counter = Counter(trade.order for trade in self.trades
                           if trade.tick.index <= tick_index)
