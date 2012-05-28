@@ -1,7 +1,9 @@
 import datetime
 import cPickle as pickle
+import re
 
 from ystockquote import get_historical_prices
+from matplotlib.pyplot import plot, savefig
 
 from tick import Tick
 
@@ -17,6 +19,7 @@ class Stock(object):
     """
 
     def __init__(self, symbol=None):
+        self.symbol = symbol
         self.data = []
         if symbol is not None:
             self.load(symbol)
@@ -67,4 +70,24 @@ class Stock(object):
     def __getitem__(self, index):
         return self.data[index]
 
+    def plot(self, *args):
+        """ Save a plot of Tick args under the name symbol.png
 
+        >>> goog = Stock('GOOG')
+
+        To get a plot of close, upper and lover bollinger band for N=30 and K=1
+
+        >>> goog.plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)')
+        """
+        for value in args:
+            match = re.match(r"(?P<method>\w+)(?P<parameters>\(.*\))?", value)
+            dict_ = match.groupdict()
+            method = dict_['method']
+            parameters = None
+            if dict_['parameters']:
+                parameters = map(int, dict_['parameters'][1:-1].split(','))
+            if parameters:
+                plot([getattr(t, method)(*parameters) for t in self.data])
+            else:
+                plot([getattr(t, method) for t in self.data])
+        savefig('{0}.png'.format(self.symbol))
