@@ -32,6 +32,9 @@ class BackTest(object):
 
     def __init__(self):
         self.cost = lambda trade: 0
+        self.stock = None
+        self.strategy = None
+        self.trades = []
 
     def __call__(self, stock, strategy):
         self.stock = stock

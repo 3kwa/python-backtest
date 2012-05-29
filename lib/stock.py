@@ -85,7 +85,7 @@ class Stock(object):
         To get a plot of close, upper and lover bollinger band for N=30 and K=1
         for GOOG
 
-        >>> Stock('GOOG').plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)')
+        >>> Stock('GOOG').plot('close', 'upper_bb(30, 1)', 'lower_bb(30, 1)') #doctest: +SKIP
         """
         for value in args:
             match = re.match(r"(?P<method>\w+)(?P<parameters>\(.*\))?", value)
