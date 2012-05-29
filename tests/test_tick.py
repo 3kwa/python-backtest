@@ -17,9 +17,6 @@ class TestTick(unittest.TestCase):
             Tick(self.stock, 2, datetime.date(2012, 5, 27), 3.0, 6.0, 9.0,
                  12.0, 15, 18.0) ])
 
-    def tearDown(self):
-        pass
-
     def test_instantiation(self):
         tick = Tick(self.stock, 3, datetime.date(2012, 5, 28), 4.0, 8.0, 12.0,
                     16.0, 20, 24.0)
