@@ -1,6 +1,7 @@
 from collections import namedtuple, Counter
 
-from matplotlib.pyplot import plot, subplot, ylim, yticks, savefig, clf
+from matplotlib.pyplot import plot, subplot, ylim, yticks, savefig, clf, \
+    fill_between
 
 
 Trade = namedtuple('Trade', ['order', 'tick'])
@@ -112,7 +113,7 @@ net={0.net})'.format(self, len(self.trades))
         plot_position = subplot(212, sharex=plot_net)
         ylim(-1.5, 1.5)
         yticks((-1, 0, 1), ('short', '...', 'long'))
-        plot(date, position)
+        fill_between(date, position)
         savefig('png/{0}_{1}.png'.format(self.stock.symbol,
                                      self.strategy.__class__.__name__))
         clf()
