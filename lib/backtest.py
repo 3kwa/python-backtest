@@ -1,6 +1,6 @@
 from collections import namedtuple, Counter
 
-from matplotlib.pyplot import plot, subplot, ylim, yticks, savefig, clf, \
+from matplotlib.pyplot import plot, subplot2grid, ylim, yticks, savefig, clf, \
     fill_between
 
 
@@ -108,9 +108,9 @@ net={0.net})'.format(self, len(self.trades))
         date = [tick.date for tick in self.stock]
         net = [self._net(tick.index) for tick in self.stock]
         position = [self._position(tick.index, True) for tick in self.stock]
-        plot_net = subplot(211)
+        plot_net = subplot2grid((3, 1), (0, 0), rowspan=2)
         plot(date, net)
-        plot_position = subplot(212, sharex=plot_net)
+        plot_position = subplot2grid((3, 1), (2, 0), sharex=plot_net)
         ylim(-1.5, 1.5)
         yticks((-1, 0, 1), ('short', '...', 'long'))
         fill_between(date, position)
