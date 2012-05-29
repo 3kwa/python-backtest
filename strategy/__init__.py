@@ -13,7 +13,7 @@ the band K : Bollinger(N, K)
 Define your strategy in the magic method __call__(self, tick) in order to be
 able to call the strategy with a Tick.
 
->>> bollinger(tick)
+>>> bollinger(tick) #doctest: +SKIP
 'sell'
 """
 
