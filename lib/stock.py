@@ -20,7 +20,8 @@ class Stock(object):
     True
     """
 
-    def __init__(self, symbol=None):
+    def __init__(self, symbol=None, yahoo=get_historical_prices):
+        self.yahoo = yahoo
         self.symbol = symbol
         self.data = []
         if symbol is not None:
@@ -34,7 +35,7 @@ class Stock(object):
         raw = Stock.get_from_cache(symbol)
         if raw is None:
             today = datetime.date.today().strftime('%Y%m%d')
-            raw = get_historical_prices(symbol, '20010103', today)
+            raw = self.yahoo(symbol, '20010103', today)
             Stock.save_to_cache(symbol, raw)
         # Tick aware of the time series it belongs to
         self.data.extend(
